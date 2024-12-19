@@ -103,6 +103,20 @@ class ImageProcessor:
         
         current_image = 0
         total_images = len(valid_images)
+        # Calculate minimum margin (1cm = 10mm)
+        min_margin = self.cfg.get("pdf_output.min_margin", 10) 
+
+        # Calculate total width needed for a row
+        total_row_width = (self.CARD_WIDTH * images_per_row) + (spacing * (images_per_row - 1))
+        
+        # Calculate actual margin that would result from pure centering
+        actual_margin = (page_width - total_row_width) / 2
+        
+        # Check if margin is sufficient, if not use minimum
+        x_start = actual_margin
+        if actual_margin < min_margin:
+            logger.warning(f"Margin too small ({actual_margin/mm:.1f}mm). Enforcing minimum margin: {min_margin/mm:.1f}mm")
+            x_start = min_margin
         
         while current_image < total_images:
             # Start new page
@@ -110,7 +124,7 @@ class ImageProcessor:
             
             # Process three rows
             for row in range(rows_per_page):
-                x = margin
+                x = x_start
                 
                 # Process images in current row
                 for col in range(images_per_row):
