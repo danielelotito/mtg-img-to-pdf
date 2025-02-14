@@ -9,6 +9,8 @@ hydra:
 
 # Image processing configurations
 image_specs:
+  check_valid_dimensions: true
+  check_dpi: true
   valid_dimensions:
     - [400, 560]  # width x height
     - [744, 1045]  # width x height
@@ -27,14 +29,7 @@ pdf_output:
 # Input/Output configurations
 folders:
   input_paths:
-    # - ./img/finished
-    # - "C:/Users/Daniele/Desktop/MTG-project/telegram_16_12"
-    - "C:/Users/Daniele/Desktop/MTG-project/mtg_nexus"
-    - "C:/Users/Daniele/Desktop/MTG-project/mtg_nexus"
-    - "C:/Users/Daniele/Desktop/MTG-project/finished"
-    - "C:/Users/Daniele/Desktop/MTG-project/finished"
-    - "C:/Users/Daniele/Desktop/MTG-project/finished-core"
-    - "C:/Users/Daniele/Desktop/MTG-project/finished-core"
+    - ./img/
   supported_extensions: [".jpg", ".jpeg", ".png"]
 
 # Logging configuration

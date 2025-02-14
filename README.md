@@ -54,6 +54,8 @@ The application uses Hydra for configuration management. Main configuration opti
 
 ```yaml
 image_specs:
+  check_valid_dimensions: true 
+  check_dpi: true 
   valid_dimensions:
     - [744, 1045]  # width x height
     - [744, 1039]

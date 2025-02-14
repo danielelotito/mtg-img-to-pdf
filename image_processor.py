@@ -20,7 +20,8 @@ class ImageProcessor:
         self.valid_dpis = cfg.image_specs.valid_dpis
         self.supported_extensions = cfg.folders.supported_extensions
         self.original_cwd = get_original_cwd()
-        
+        self.check_valid_dimensions = cfg.get("image_specs.check_valid_dimensions", False)
+        self.check_dpi = cfg.get("image_specs.check_dpi", False)
         # MTG card dimensions in mm
         self.CARD_WIDTH = 63.5 * mm  # 6.35 cm = 63.5 mm
         self.CARD_HEIGHT = 88.9 * mm # 8.89 cm = 88.9 mm
@@ -32,24 +33,27 @@ class ImageProcessor:
     def validate_image(self, image_path: Path) -> Tuple[bool, Image.Image, str]:
         try:
             with Image.open(image_path) as img:
-                width, height = img.size
-                
-                valid_dim = False
-                for valid_w, valid_h in self.valid_dimensions:
-                    if width == valid_w and height == valid_h:
-                        valid_dim = True
-                        break
-                
-                if not valid_dim:
-                    return False, None, f"Invalid dimensions {width}x{height}"
-                
-                try:
-                    dpi = img.info.get('dpi', (None, None))[0]
-                    if dpi not in self.valid_dpis:
-                        return False, None, f"Invalid DPI {dpi}"
-                except Exception as e:
-                    # Just proceed if DPI can't be read
-                    pass
+                if self.check_valid_dimensions:
+                    width, height = img.size
+                    
+                    valid_dim = False
+                    
+                    for valid_w, valid_h in self.valid_dimensions:
+                        if width == valid_w and height == valid_h:
+                            valid_dim = True
+                            break
+                    
+                    if not valid_dim:
+                        return False, None, f"Invalid dimensions {width}x{height}"
+                    
+                if self.check_dpi:
+                    try:
+                        dpi = img.info.get('dpi', (None, None))[0]
+                        if dpi not in self.valid_dpis:
+                            return False, None, f"Invalid DPI {dpi}"
+                    except Exception as e:
+                        # Just proceed if DPI can't be read
+                        pass
                 
                 return True, img, "Valid"
                 
